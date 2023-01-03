@@ -11,16 +11,15 @@ public class PlayerController : ControllerBase
 
     public PlayerController()
     {
-        _players.Add(
-            new Player
-            {
-                Id = 1,
-                Firstname = "John",
-                Lastname = "Smith",
-                Email = "JSmith@web.com",
-                PhoneNumber = "123456789",
-                IsActivePlayer = true
-            });
+        _players.Add(new Player
+        {
+            Id = 1,
+            Firstname = "John",
+            Lastname = "Smith",
+            Email = "JSmith@web.com",
+            PhoneNumber = "123456789",
+            IsActivePlayer = true
+        });
 
         _players.Add(new Player
         {
