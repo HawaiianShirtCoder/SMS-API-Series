@@ -12,4 +12,12 @@
     <Folder Include="Logic\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\Haine\source\repos\SMS\SMS.Shared\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Users\Haine\source\repos\SMS\SMS.Shared\.editorconfig" />
+  </ItemGroup>
+
 </Project>
