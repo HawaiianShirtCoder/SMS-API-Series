@@ -1,5 +1,5 @@
 Sports Management System
-##Code relating to the zero-to-hero ASP.NET web api.
+Code relating to the zero-to-hero ASP.NET web api.
 
 Code includes:
 - ASP.Net web api project
