@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SMS.Shared.Models;
+﻿namespace SMS.Shared.Models;
 
 public class Fixture
 {
+    public int Id { get; set; }
     public string Opponent { get; set; }
     public DateTime DateOfFixture { get; set; }
     public string Venue { get; set; }
