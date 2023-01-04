@@ -1,0 +1,5 @@
+﻿Any http codes starting with a 2xx = success
+Any http codes starting with a 4xx = errors causes by the client (i.e. sending bad data, request a resource that does not exist)
+Any http codes starting with 5xx = server errors :(  Often hardest to resolve - this is where a good level of logging is helpful!
+
+https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#2xx_success
