@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SMS.API.Fake_Database;
+using SMS.Shared.DTOs;
 using SMS.Shared.Models;
 
 namespace SMS.API.Controllers;
@@ -14,7 +15,15 @@ public class PlayerController : ControllerBase
     [HttpGet]
     public ActionResult GetData()
     {
-        return Ok(InMemoryDatabase.Players);
+
+        var playerSummary = (from p in InMemoryDatabase.Players
+                             select new PlayerSummaryDto
+                             {
+                                 Id = p.Id,
+                                 Fullname = $"{p.Firstname} {p.Lastname}",
+                                 IsActivePlayer = p.IsActivePlayer
+                             }).ToList();
+        return Ok(playerSummary);
     }
 
     [Route("{id}")]
