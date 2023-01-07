@@ -87,4 +87,6 @@ public class PlayerController : ControllerBase
         var lastId = InMemoryDatabase.Players.Max(x => x.Id);
         return lastId + 1;
     }
+
+
 }
