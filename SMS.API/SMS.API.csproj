@@ -23,4 +23,8 @@
     <None Include="C:\Users\Haine\source\repos\SMS\SMS.API\.editorconfig" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="bin\" />
+  </ItemGroup>
+
 </Project>

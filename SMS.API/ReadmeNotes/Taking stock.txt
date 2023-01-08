@@ -1,0 +1,8 @@
+﻿- Create FIXTURE endpoints e.g. Get, Post, Put, Delete
+- Use DTOs rather than models in the web api calls
+- Use data validations
+- Convert to async?
+
+Fixture using an Enum for the VENUE Property
+
+Using a really database

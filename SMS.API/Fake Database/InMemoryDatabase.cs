@@ -37,5 +37,39 @@ public class InMemoryDatabase
             }
 
         };
+
+    public static List<Fixture> Fixtures = new List<Fixture>()
+    {
+        new Fixture
+        {
+            Id = 1,
+            Opponent = "Southampton",
+            DateOfFixture= new DateTime(2023,1,23),
+            Venue = "Home",
+            StartTime = "15:00",
+            Postcode = "n/a",
+            NumberOfPlayersRequired = 11
+        },
+        new Fixture
+        {
+            Id = 2,
+            Opponent = "Liverpool",
+            DateOfFixture= new DateTime(2023,1,24),
+            Venue = "Away",
+            StartTime = "15:00",
+            Postcode = "postcode1",
+            NumberOfPlayersRequired = 11
+        },
+        new Fixture
+        {
+            Id = 3,
+            Opponent = "West Ham",
+            DateOfFixture= new DateTime(2023,1,25),
+            Venue = "Away",
+            StartTime = "17:00",
+            Postcode = "postcode2",
+            NumberOfPlayersRequired = 11
+        }
+    };
 }
 
