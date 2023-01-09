@@ -45,7 +45,7 @@ public class InMemoryDatabase
             Id = 1,
             Opponent = "Southampton",
             DateOfFixture= new DateTime(2023,1,23),
-            Venue = "Home",
+            Venue =Shared.Enums.VenueEnum.Home,
             StartTime = "15:00",
             Postcode = "n/a",
             NumberOfPlayersRequired = 11
@@ -55,7 +55,7 @@ public class InMemoryDatabase
             Id = 2,
             Opponent = "Liverpool",
             DateOfFixture= new DateTime(2023,1,24),
-            Venue = "Away",
+            Venue = Shared.Enums.VenueEnum.Away,
             StartTime = "15:00",
             Postcode = "postcode1",
             NumberOfPlayersRequired = 11
@@ -65,7 +65,7 @@ public class InMemoryDatabase
             Id = 3,
             Opponent = "West Ham",
             DateOfFixture= new DateTime(2023,1,25),
-            Venue = "Away",
+            Venue = Shared.Enums.VenueEnum.Away,
             StartTime = "17:00",
             Postcode = "postcode2",
             NumberOfPlayersRequired = 11
