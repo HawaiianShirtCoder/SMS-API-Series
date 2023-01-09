@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SMS.API.Fake_Database;
 using SMS.Shared.DTOs;
+using SMS.Shared.Helper;
 using SMS.Shared.Models;
 
 namespace SMS.API.Controllers;
@@ -40,8 +41,9 @@ public class PlayerController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult AddPlayer([FromBody] Player player)
+    public ActionResult AddPlayer([FromBody] AddPlayerDto dto)
     {
+        var player = dto.ToPlayerModel();
         player.Id = NextIdHelper();
         InMemoryDatabase.Players.Add(player);
         //return Ok(InMemoryDatabase.Players);
