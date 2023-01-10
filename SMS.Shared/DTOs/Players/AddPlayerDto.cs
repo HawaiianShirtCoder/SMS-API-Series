@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SMS.Shared.DTOs;
+namespace SMS.Shared.DTOs.Players;
 
 public class AddPlayerDto
 {

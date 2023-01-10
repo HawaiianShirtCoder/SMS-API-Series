@@ -1,4 +1,4 @@
-﻿namespace SMS.Shared.DTOs;
+﻿namespace SMS.Shared.DTOs.Players;
 
 public class PlayerSummaryDto
 {

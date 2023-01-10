@@ -1,4 +1,4 @@
-﻿using SMS.Shared.DTOs;
+﻿using SMS.Shared.DTOs.Players;
 using SMS.Shared.Models;
 
 namespace SMS.Shared.Helper;

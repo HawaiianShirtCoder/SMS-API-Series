@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SMS.API.Fake_Database;
 using SMS.Shared.DTOs;
+using SMS.Shared.DTOs.Players;
 using SMS.Shared.Helper;
 using SMS.Shared.Models;
 
