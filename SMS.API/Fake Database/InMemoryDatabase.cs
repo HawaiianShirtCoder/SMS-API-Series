@@ -71,5 +71,40 @@ public class InMemoryDatabase
             NumberOfPlayersRequired = 11
         }
     };
+
+    public static List<Availability> Availabilities = new List<Availability>()
+    {
+        new Availability
+        {
+            Id = 1,
+            FixtureId = 1,
+            PlayerId = 1
+        },
+          new Availability
+        {
+            Id = 2,
+            FixtureId = 1,
+            PlayerId = 2
+        },
+            new Availability
+        {
+            Id = 3,
+            FixtureId = 1,
+            PlayerId = 3
+        },
+              new Availability
+        {
+            Id = 4,
+            FixtureId = 2,
+            PlayerId = 3
+        },
+                new Availability
+        {
+            Id = 5,
+            FixtureId = 2,
+            PlayerId = 4
+        },
+
+    };
 }
 

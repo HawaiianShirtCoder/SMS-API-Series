@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SMS.API.Fake_Database;
+using SMS.Shared.DTOs.Fixtures;
+using SMS.Shared.Helper;
 using SMS.Shared.Models;
 
 namespace SMS.API.Controllers;
@@ -23,12 +25,13 @@ public class FixtureController : ControllerBase
         {
             return NotFound("Cannot find the fixture");
         }
-        return Ok(InMemoryDatabase.Fixtures);
+        return Ok(fixture);
     }
 
     [HttpPost]
-    public ActionResult AddFixture([FromBody] Fixture fixture)
+    public ActionResult AddFixture([FromBody] AddFixtureDto addFixture)
     {
+        var fixture = addFixture.ToFixtureModel();
         fixture.Id = NextIdHelper();
         InMemoryDatabase.Fixtures.Add(fixture);
         return CreatedAtAction(nameof(GetFixtureById), new { id = fixture.Id }, fixture);
@@ -45,7 +48,7 @@ public class FixtureController : ControllerBase
             return NotFound();
         }
         InMemoryDatabase.Fixtures.Remove(fixtureToDelete);
-        return Ok(InMemoryDatabase.Fixtures);
+        return NoContent();
     }
 
     [Route("{id}")]
@@ -65,7 +68,7 @@ public class FixtureController : ControllerBase
         InMemoryDatabase.Fixtures.Remove(fixtureToUpdate);
         fixture.Id = oldId;
         InMemoryDatabase.Fixtures.Add(fixture);
-        return Ok(InMemoryDatabase.Fixtures);
+        return Ok(fixture);
     }
 
     private int NextIdHelper()

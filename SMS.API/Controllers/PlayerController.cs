@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SMS.API.Fake_Database;
-using SMS.Shared.DTOs;
 using SMS.Shared.DTOs.Players;
 using SMS.Shared.Helper;
 using SMS.Shared.Models;
@@ -11,9 +10,6 @@ namespace SMS.API.Controllers;
 [ApiController]
 public class PlayerController : ControllerBase
 {
-
-
-
     [HttpGet]
     public ActionResult GetData()
     {
@@ -62,7 +58,7 @@ public class PlayerController : ControllerBase
             return NotFound();
         }
         InMemoryDatabase.Players.Remove(playerToDelete);
-        return Ok(InMemoryDatabase.Players);
+        return NoContent();
     }
 
     [Route("{id}")]
@@ -82,7 +78,7 @@ public class PlayerController : ControllerBase
         InMemoryDatabase.Players.Remove(playerToUpdate);
         player.Id = oldId;
         InMemoryDatabase.Players.Add(player);
-        return Ok(InMemoryDatabase.Players);
+        return Ok(player);
     }
 
     private int NextIdHelper()

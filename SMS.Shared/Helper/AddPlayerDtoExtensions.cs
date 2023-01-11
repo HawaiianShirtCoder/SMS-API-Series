@@ -5,6 +5,11 @@ namespace SMS.Shared.Helper;
 
 public static class AddPlayerDtoExtensions
 {
+    /// <summary>
+    /// Converts a AddPlayerDto to a Player model
+    /// </summary>
+    /// <param name="value">dto</param>
+    /// <returns>model</returns>
     public static Player ToPlayerModel(this AddPlayerDto value)
     {
         return new Player

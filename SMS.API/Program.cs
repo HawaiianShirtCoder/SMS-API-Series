@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddJsonOptions(x =>
 {
-    // serialize enums as strings in api responses (e.g. HOME OR AWAY)
+    // NOTE: serialize enums as strings in api responses (e.g. HOME OR AWAY)
     x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 }); ;
 
