@@ -13,7 +13,7 @@ public class FixtureController : ControllerBase
     [HttpGet]
     public ActionResult GetAllFixtures()
     {
-        return Ok(InMemoryDatabase.Fixtures);
+        return Ok(InMemoryDatabase.Fixtures); // change to a dto!
     }
 
     [Route("{id}")]
