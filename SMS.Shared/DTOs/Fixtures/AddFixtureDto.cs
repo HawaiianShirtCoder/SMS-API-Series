@@ -10,7 +10,7 @@ public class AddFixtureDto
     public string Opponent { get; set; } = string.Empty;
     [Required]
     public DateTime DateOfFixture { get; set; }
-    [Required]
+    [EnumDataType(typeof(VenueEnum), ErrorMessage = "Value must be 'Home' or 'Away'")]
     public VenueEnum Venue { get; set; }
     [Required]
     public string StartTime { get; set; } = string.Empty;

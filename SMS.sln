@@ -9,6 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SMS.API", "SMS.API\SMS.API.
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SMS.Database", "SMS.Database\SMS.Database.sqlproj", "{89C3BFEF-6544-4794-80B8-4B1A59D673FE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestTheDAL", "TestTheDAL\TestTheDAL.csproj", "{0376D2D4-C9E7-4818-8397-D9C51F5AC92C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B6006507-CD8A-4F37-AB2B-023FC385D62C}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +36,10 @@ Global
 		{89C3BFEF-6544-4794-80B8-4B1A59D673FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89C3BFEF-6544-4794-80B8-4B1A59D673FE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{89C3BFEF-6544-4794-80B8-4B1A59D673FE}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{0376D2D4-C9E7-4818-8397-D9C51F5AC92C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0376D2D4-C9E7-4818-8397-D9C51F5AC92C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0376D2D4-C9E7-4818-8397-D9C51F5AC92C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0376D2D4-C9E7-4818-8397-D9C51F5AC92C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

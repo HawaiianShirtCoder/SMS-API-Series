@@ -116,7 +116,7 @@ namespace SMS.API.Controllers
                     FixtureId = availabilityDataEntry.FixtureId,
                     PlayerId = availabilityDataEntry.PlayerId,
                 });
-                return Ok("Add availability for this fixture");
+                return Ok("Added availability for this fixture");
             }
             else
             {
