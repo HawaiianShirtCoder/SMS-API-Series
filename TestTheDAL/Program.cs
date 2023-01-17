@@ -14,19 +14,18 @@ var dataAccess = new DapperDataAccess();
 
 
 // Example 1 - Get all players
-//Console.WriteLine("**** GET all players from the database ****");
-//var sqlStatement = "SELECT * FROM [Player];";
+Console.WriteLine("**** GET all players from the database ****");
+var sqlStatement = "SELECT * FROM [Player];";
 
-//var playersFromDatabase = await dataAccess.RunAQuery<Player, dynamic>(
-//    sqlStatement,
-//    new { },
-//    commandType: System.Data.CommandType.Text,
-//    connectionString: connectionString);
+var playersFromDatabase = await dataAccess.RunAQuery<Player, dynamic>(
+    sqlStatement,
+    new { },
+    connectionString: connectionString);
 
-//foreach (var p in playersFromDatabase)
-//{
-//    Console.WriteLine($"{p.Firstname}, {p.Lastname}, {p.Email}, {p.PhoneNumber}, {p.IsActivePlayer}");
-//}
+foreach (var p in playersFromDatabase)
+{
+    Console.WriteLine($"{p.Firstname}, {p.Lastname}, {p.Email}, {p.PhoneNumber}, {p.IsActivePlayer}");
+}
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -38,7 +37,6 @@ var dataAccess = new DapperDataAccess();
 //var playerFromDatabase = await dataAccess.RunAQuery<Player, dynamic>(
 //    sqlStatement2,
 //    new { id = id },
-//    commandType: System.Data.CommandType.Text,
 //    connectionString: connectionString);
 
 //var p = playerFromDatabase.FirstOrDefault();
@@ -64,7 +62,6 @@ var dataAccess = new DapperDataAccess();
 //            PhoneNumber = addPlayerDto.PhoneNumber,
 //            IsActivePlayer = addPlayerDto.IsActivePlayer,
 //        },
-//        System.Data.CommandType.Text,
 //        connectionString);
 //    Console.WriteLine("Inserted new player");
 //}
@@ -76,29 +73,28 @@ var dataAccess = new DapperDataAccess();
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 //Example 4 - deleting a record from the system
-Console.WriteLine("**** Delete a player to the database ****");
-Console.WriteLine("Provide Player Id you wish to delete:");
-var id = Console.ReadLine();
+//Console.WriteLine("**** Delete a player to the database ****");
+//Console.WriteLine("Provide Player Id you wish to delete:");
+//var id = Console.ReadLine();
 
-var sqlStatement4 = "DELETE FROM Player WHERE id = @id";
+//var sqlStatement4 = "DELETE FROM Player WHERE id = @id";
 
-try
-{
-    await dataAccess.ExecuteACommand<Player>(
-        sqlStatement4,
-        new Player
-        {
-            Id = Convert.ToInt32(id)
-        },
-        System.Data.CommandType.Text,
-        connectionString);
+//try
+//{
+//    await dataAccess.ExecuteACommand<Player>(
+//        sqlStatement4,
+//        new Player
+//        {
+//            Id = Convert.ToInt32(id)
+//        },
+//        connectionString);
 
-    Console.WriteLine("Player has been deleted from the db");
-}
-catch (Exception)
-{
-    Console.WriteLine("Something went wrong with delete!");
-}
+//    Console.WriteLine("Player has been deleted from the db");
+//}
+//catch (Exception)
+//{
+//    Console.WriteLine("Something went wrong with delete!");
+//}
 
 Console.ReadLine();
 

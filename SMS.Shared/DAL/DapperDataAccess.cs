@@ -11,8 +11,8 @@ public class DapperDataAccess : IDataAccess
     public async Task<IEnumerable<T>> RunAQuery<T, U>(
        string sqlStatement,
        U parameters,
-       CommandType commandType = CommandType.Text,
-       string connectionString = "SMS")
+       string connectionString,
+       CommandType commandType = CommandType.Text)
     {
         // select * from player
         // select * from fixture
@@ -26,8 +26,9 @@ public class DapperDataAccess : IDataAccess
     public async Task ExecuteACommand<T>(
        string sqlStatement,
        T parameters,
-       CommandType commandType = CommandType.Text,
-       string connectionString = "SMS")
+       string connectionString,
+       CommandType commandType = CommandType.Text
+       )
     {
         // INSERT INTO Player(f1, f1, f3) VALUES (V1, V2, V3);
         // DELETE FROM PLAYER WHERE ID = 3;
