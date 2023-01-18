@@ -1,3 +1,4 @@
+using SMS.Shared.BLL;
 using SMS.Shared.DAL;
 using System.Text.Json.Serialization;
 
@@ -17,6 +18,7 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IDataAccess, DapperDataAccess>();
+builder.Services.AddScoped<ISMSLogic, SMSLogic>();
 
 var app = builder.Build();
 

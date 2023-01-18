@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SMS.API.Fake_Database;
+using SMS.Shared.BLL;
 using SMS.Shared.DTOs.Players;
-using SMS.Shared.Helper;
 using SMS.Shared.Models;
 
 namespace SMS.API.Controllers;
@@ -10,18 +10,19 @@ namespace SMS.API.Controllers;
 [ApiController]
 public class PlayerController : ControllerBase
 {
+    private readonly ISMSLogic _businessLogic;
+
+    public PlayerController(ISMSLogic businessLogic)
+    {
+        _businessLogic = businessLogic;
+    }
+
     [HttpGet]
-    public ActionResult GetData()
+    public async Task<ActionResult> GetPlayersSummary()
     {
 
-        var playerSummary = (from p in InMemoryDatabase.Players
-                             select new PlayerSummaryDto
-                             {
-                                 Id = p.Id,
-                                 Fullname = $"{p.Firstname} {p.Lastname}",
-                                 IsActivePlayer = p.IsActivePlayer
-                             }).ToList();
-        return Ok(playerSummary);
+        return Ok(await _businessLogic.GetPlayersSummary());
+
     }
 
     [Route("{id}")]
@@ -38,14 +39,24 @@ public class PlayerController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult AddPlayer([FromBody] AddPlayerDto dto)
+    public async Task<ActionResult> AddPlayer([FromBody] AddPlayerDto dto)
     {
-        var player = dto.ToPlayerModel();
-        player.Id = NextIdHelper();
-        InMemoryDatabase.Players.Add(player);
-        //return Ok(InMemoryDatabase.Players);
-        //return NoContent();
-        return CreatedAtAction(nameof(GetPlayerById), new { id = player.Id }, player);
+        //var player = dto.ToPlayerModel();
+        //player.Id = NextIdHelper();
+        //InMemoryDatabase.Players.Add(player);
+        ////return Ok(InMemoryDatabase.Players);
+        ////return NoContent();
+        //return CreatedAtAction(nameof(GetPlayerById), new { id = player.Id }, player);
+        try
+        {
+            await _businessLogic.SavePlayer(dto);
+            return NoContent();
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
     }
 
     [Route("{id}")]
