@@ -6,5 +6,6 @@ namespace SMS.Shared.BLL
     {
         Task<IEnumerable<PlayerSummaryDto>> GetPlayersSummary();
         Task SavePlayer(AddPlayerDto playerToSave);
+        Task<IEnumerable<PlayerSummaryDto>> GetPlayersByStatus(bool isActivePlayer);
     }
 }

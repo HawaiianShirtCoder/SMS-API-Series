@@ -38,6 +38,12 @@ public class SMSLogic : ISMSLogic
         return summaries;
     }
 
+    public async Task<IEnumerable<PlayerSummaryDto>> GetPlayersByStatus(bool isActivePlayer)
+    {
+        var summary = await GetPlayersSummary();
+        return summary.Where(p => p.IsActivePlayer == isActivePlayer).ToList();
+    }
+
     public async Task SavePlayer(AddPlayerDto playerToSave)
     {
         // pre - processing example

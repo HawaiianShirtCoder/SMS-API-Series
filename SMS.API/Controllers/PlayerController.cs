@@ -38,6 +38,14 @@ public class PlayerController : ControllerBase
 
     }
 
+    //[Route("PlayerStatus/{isActivePlayer:bool}")]
+    [Route("{isActivePlayer:bool}")]
+    [HttpGet]
+    public async Task<ActionResult> GetPlayersByStatus(bool isActivePlayer)
+    {
+        return Ok(await _businessLogic.GetPlayersByStatus(isActivePlayer));
+    }
+
     [HttpPost]
     public async Task<ActionResult> AddPlayer([FromBody] AddPlayerDto dto)
     {
