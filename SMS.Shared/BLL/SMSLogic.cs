@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using SMS.Shared.DAL;
+using SMS.Shared.DTOs.Fixtures;
 using SMS.Shared.DTOs.Players;
 using SMS.Shared.Models;
 
@@ -18,7 +19,9 @@ public class SMSLogic : ISMSLogic
         _connectionString = _config.GetConnectionString("SMS")!;
     }
 
-    // players
+    #region Players logic
+
+
     public async Task<IEnumerable<PlayerSummaryDto>> GetPlayersSummary()
     {
         // pre processing 
@@ -81,10 +84,45 @@ public class SMSLogic : ISMSLogic
             },
             _connectionString);
     }
+    #endregion
 
 
+    #region Fixtures Logic
+    public async Task<IEnumerable<FixtureSummaryDto>> GetAllFixtures()
+    {
+        var sqlStatement = "SELECT * FROM Fixture";
+        var fixtures = await _dataAccess.RunAQuery<Fixture, dynamic>(
+            sqlStatement,
+            new { },
+            _connectionString);
 
-    // fixtures
+        return (from f in fixtures
+                select new FixtureSummaryDto
+                {
+                    Id = f.Id,
+                    Opponent = f.Opponent,
+                    DateOfFixture = f.DateOfFixture,
+                    NumberOfPlayersRequired = f.NumberOfPlayersRequired,
+                    StartTime = f.StartTime,
+                    Venue = f.Venue.ToString()
+                }).ToList();
+    }
+
+    public async Task<bool> DeleteFixture(int fixtureId)
+    {
+        var sqlStatement = "DELETE FROM Fixture WHERE id = @id";
+        try
+        {
+            await _dataAccess.ExecuteACommand(sqlStatement, new { id = fixtureId }, _connectionString);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+    #endregion
+
 
     // availability
 }
