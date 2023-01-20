@@ -1,5 +1,7 @@
-﻿using SMS.Shared.DTOs.Fixtures;
+﻿using SMS.Shared.DTOs;
+using SMS.Shared.DTOs.Fixtures;
 using SMS.Shared.DTOs.Players;
+using SMS.Shared.Models;
 
 namespace SMS.Shared.BLL
 {
@@ -7,15 +9,22 @@ namespace SMS.Shared.BLL
     {
         #region Players Logic contracts
         Task<IEnumerable<PlayerSummaryDto>> GetPlayersSummary();
-        Task SavePlayer(AddPlayerDto playerToSave);
+        Task<Player?> GetPlayer(int id);
+        Task<ExecuteCommandResponseDto> SavePlayer(AddPlayerDto playerToSave);
         Task<IEnumerable<PlayerSummaryDto>> GetPlayersByStatus(bool isActivePlayer);
+        Task<ExecuteCommandResponseDto> DeletePlayer(int id);
+        Task<ExecuteCommandResponseDto> AmendPlayer(int id, Player playerToChange);
         #endregion
 
 
         #region Fixture logic contracts
         Task<IEnumerable<FixtureSummaryDto>> GetAllFixtures();
+        Task<Fixture?> GetFixture(int FixtureId);
 
-        Task<bool> DeleteFixture(int fixtureId);
+        Task<ExecuteCommandResponseDto> SaveFixture(AddFixtureDto fixtureToAdd);
+        Task<ExecuteCommandResponseDto> AmendFixture(int id, Fixture fixtureToChange);
+
+        Task<ExecuteCommandResponseDto> DeleteFixture(int fixtureId);
         #endregion
 
     }

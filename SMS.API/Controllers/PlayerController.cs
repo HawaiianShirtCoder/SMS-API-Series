@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SMS.API.Fake_Database;
 using SMS.Shared.BLL;
 using SMS.Shared.DTOs.Players;
 using SMS.Shared.Models;
@@ -27,14 +26,10 @@ public class PlayerController : ControllerBase
 
     [Route("{id}")]
     [HttpGet]
-    public ActionResult GetPlayerById(int id)
+    public async Task<ActionResult> GetPlayerById(int id)
     {
-        var player = InMemoryDatabase.Players.FirstOrDefault(x => x.Id == id);
-        if (player == null)
-        {
-            return NotFound();
-        }
-        return Ok(player);
+        var player = await _businessLogic.GetPlayer(id);
+        return player is null ? NotFound("Cannot find the player") : Ok(player);
 
     }
 
@@ -47,64 +42,38 @@ public class PlayerController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddPlayer([FromBody] AddPlayerDto dto)
+    public async Task<ActionResult> AddPlayer([FromBody] AddPlayerDto addPlayer)
     {
-        //var player = dto.ToPlayerModel();
-        //player.Id = NextIdHelper();
-        //InMemoryDatabase.Players.Add(player);
-        ////return Ok(InMemoryDatabase.Players);
-        ////return NoContent();
-        //return CreatedAtAction(nameof(GetPlayerById), new { id = player.Id }, player);
-        try
+        var response = await _businessLogic.SavePlayer(addPlayer);
+        if (response.ExecutionStatus != Shared.Enums.ExecuteCommandEnum.Ok)
         {
-            await _businessLogic.SavePlayer(dto);
-            return NoContent();
+            return StatusCode((int)response.ExecutionStatus, response.ErrorMessage);
         }
-        catch (Exception)
-        {
-
-            throw;
-        }
+        return NoContent();
     }
 
     [Route("{id}")]
     [HttpDelete]
-    public ActionResult DeletePlayer(int id)
+    public async Task<ActionResult> DeletePlayer(int id)
     {
-        var playerToDelete = InMemoryDatabase.Players.FirstOrDefault(x => x.Id == id);
-        if (playerToDelete == null)
+        var response = await _businessLogic.DeletePlayer(id);
+        if (response.ExecutionStatus != Shared.Enums.ExecuteCommandEnum.Ok)
         {
-            return NotFound();
+            return StatusCode((int)response.ExecutionStatus, response.ErrorMessage);
         }
-        InMemoryDatabase.Players.Remove(playerToDelete);
         return NoContent();
     }
 
     [Route("{id}")]
     [HttpPut]
-    public ActionResult UpdatePlayer(int id, [FromBody] Player player)
+    public async Task<ActionResult> UpdatePlayer(int id, [FromBody] Player player)
     {
-        if (id != player.Id)
+        var response = await _businessLogic.AmendPlayer(id, player);
+        if (response.ExecutionStatus != Shared.Enums.ExecuteCommandEnum.Ok)
         {
-            return BadRequest("Id mis-match");
+            return StatusCode((int)response.ExecutionStatus, response.ErrorMessage);
         }
-        var playerToUpdate = InMemoryDatabase.Players.FirstOrDefault(x => x.Id == id);
-        if (playerToUpdate == null)
-        {
-            return NotFound("Could not find the player to update!");
-        }
-        var oldId = playerToUpdate.Id;
-        InMemoryDatabase.Players.Remove(playerToUpdate);
-        player.Id = oldId;
-        InMemoryDatabase.Players.Add(player);
-        return Ok(player);
+        return NoContent();
     }
-
-    private int NextIdHelper()
-    {
-        var lastId = InMemoryDatabase.Players.Max(x => x.Id);
-        return lastId + 1;
-    }
-
 
 }

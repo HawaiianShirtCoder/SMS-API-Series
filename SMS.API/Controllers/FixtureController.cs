@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SMS.API.Fake_Database;
 using SMS.Shared.BLL;
 using SMS.Shared.DTOs.Fixtures;
-using SMS.Shared.Helper;
 using SMS.Shared.Models;
 
 namespace SMS.API.Controllers;
@@ -26,23 +24,23 @@ public class FixtureController : ControllerBase
 
     [Route("{id}")]
     [HttpGet]
-    public ActionResult GetFixtureById(int id)
+    public async Task<ActionResult> GetFixtureById(int id)
     {
-        var fixture = InMemoryDatabase.Fixtures.FirstOrDefault(x => x.Id == id);
-        if (fixture == null)
-        {
-            return NotFound("Cannot find the fixture");
-        }
-        return Ok(fixture);
+        var fixture = await _businessLogic.GetFixture(id);
+        return fixture is null ? NotFound("Cannot find the fixture") : Ok(fixture);
     }
 
     [HttpPost]
-    public ActionResult AddFixture([FromBody] AddFixtureDto addFixture)
+    public async Task<ActionResult> AddFixture([FromBody] AddFixtureDto addFixture)
     {
-        var fixture = addFixture.ToFixtureModel();
-        fixture.Id = NextIdHelper();
-        InMemoryDatabase.Fixtures.Add(fixture);
-        return CreatedAtAction(nameof(GetFixtureById), new { id = fixture.Id }, fixture);
+
+        var response = await _businessLogic.SaveFixture(addFixture);
+        if (response.ExecutionStatus != Shared.Enums.ExecuteCommandEnum.Ok)
+        {
+            return StatusCode((int)response.ExecutionStatus, response.ErrorMessage);
+        }
+        return NoContent();
+
     }
 
 
@@ -50,36 +48,26 @@ public class FixtureController : ControllerBase
     [HttpDelete]
     public async Task<ActionResult> DeleteFixture(int id)
     {
-        var wasDeleted = await _businessLogic.DeleteFixture(id);
-        return wasDeleted ? NoContent() : StatusCode(StatusCodes.Status500InternalServerError, "Delete failed");
-
+        var response = await _businessLogic.DeleteFixture(id);
+        if (response.ExecutionStatus != Shared.Enums.ExecuteCommandEnum.Ok)
+        {
+            return StatusCode((int)response.ExecutionStatus, response.ErrorMessage);
+        }
+        return NoContent();
 
 
     }
 
     [Route("{id}")]
     [HttpPut]
-    public ActionResult UpdateFixture(int id, [FromBody] Fixture fixture)
+    public async Task<ActionResult> UpdateFixture(int id, [FromBody] Fixture fixture)
     {
-        if (id != fixture.Id)
+        var response = await _businessLogic.AmendFixture(id, fixture);
+        if (response.ExecutionStatus != Shared.Enums.ExecuteCommandEnum.Ok)
         {
-            return BadRequest("Id mis-match");
+            return StatusCode((int)response.ExecutionStatus, response.ErrorMessage);
         }
-        var fixtureToUpdate = InMemoryDatabase.Fixtures.FirstOrDefault(x => x.Id == id);
-        if (fixtureToUpdate == null)
-        {
-            return NotFound("Could not find the fixture to update!");
-        }
-        var oldId = fixtureToUpdate.Id;
-        InMemoryDatabase.Fixtures.Remove(fixtureToUpdate);
-        fixture.Id = oldId;
-        InMemoryDatabase.Fixtures.Add(fixture);
-        return Ok(fixture);
+        return NoContent();
     }
 
-    private int NextIdHelper()
-    {
-        var lastId = InMemoryDatabase.Players.Max(x => x.Id);
-        return lastId + 1;
-    }
 }
