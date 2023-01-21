@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using SMS.Shared.DAL;
 using SMS.Shared.DTOs;
+using SMS.Shared.DTOs.Availability;
 using SMS.Shared.DTOs.Fixtures;
 using SMS.Shared.DTOs.Players;
 using SMS.Shared.Models;
@@ -257,7 +258,7 @@ public class SMSLogic : ISMSLogic
             return response;
         }
     }
-    #endregion
+
 
 
     public async Task<ExecuteCommandResponseDto> AmendFixture(int id, Fixture fixtureToChange)
@@ -305,6 +306,153 @@ public class SMSLogic : ISMSLogic
 
 
     }
+    #endregion
 
     // availability
+    #region availability
+    public async Task<PlayersAvailableForFixtureDto?> GetPlayersAvailableForFixture(int fixtureId)
+    {
+        var fixture = await GetFixture(fixtureId);
+        if (fixture is null)
+        {
+            return null;
+        }
+        // Shape the fixture data into PlayersAvailableForFixtureDto
+        var fixtureDetails = new PlayersAvailableForFixtureDto
+        {
+            FixtureId = fixture.Id,
+            Opponents = fixture.Opponent,
+            DateOfFixture = fixture.DateOfFixture,
+            Venue = fixture.Venue,
+            StartTime = fixture.StartTime
+        };
+
+        // Get the players who have signed up for the fixture....
+        var sqlStatement = "SELECT p.Id, p.Firstname + ' ' + p.Lastname AS 'Fullname' FROM PLayer as p JOIN Availability as a on p.Id = a.PlayerId where a.FixtureId = @fixtureId";
+        var playersAvailable = await _dataAccess.RunAQuery<PlayersAvailableDto, dynamic>(sqlStatement, new { fixtureId }, _connectionString);
+        fixtureDetails.AvailablePlayers = playersAvailable.ToList();
+        return fixtureDetails;
+    }
+
+    public async Task<MyAvailabilitySummaryDto?> GetPlayerAvailabilitySummary(int playerId)
+    {
+        var player = await GetPlayer(playerId);
+        if (player is null)
+        {
+            return null;
+        }
+        var me = new MyAvailabilitySummaryDto
+        {
+            PlayerId = player.Id,
+            Fullname = $"{player.Firstname} {player.Lastname}"
+        };
+
+        var sqlStatement = "SELECT f.Id, f.Opponent + ' (' + f.StartTime + ')' AS 'FixtureDetail'  FROM Fixture AS f JOIN Availability AS a ON f.Id = a.FixtureId WHERE a.PlayerId = @playerId";
+        IEnumerable<MyFixturesDto> myFixtures;
+        try
+        {
+            myFixtures = await _dataAccess.RunAQuery<MyFixturesDto, dynamic>(sqlStatement, new { playerId }, _connectionString);
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+
+        if (myFixtures is null)
+        {
+            return null;
+        }
+
+        me.MyFixtures = myFixtures.OrderBy(f => f.DateOfFixture).ToList();
+
+        return me;
+
+    }
+
+    public async Task<List<FixtureCountSummaryDto>> FixtureAvailabilityCounts()
+    {
+        var sqlStatement1 = "SELECT a.FixtureID, COUNT(a.FixtureID) as 'PlayersAvailableCount' FROM AVAILABILITY AS a GROUP BY a.FixtureId ORDER BY COUNT(a.FixtureID)";
+        var counts = await _dataAccess.RunAQuery<FixtureCountDto, dynamic>(sqlStatement1, new { }, _connectionString);
+
+        var allFixtures = await GetAllFixtures();
+        var finalCount = new List<FixtureCountSummaryDto>();
+
+        foreach (var fixture in allFixtures)
+        {
+            var playerForFixture = counts.FirstOrDefault(x => x.FixtureId == fixture.Id);
+            var playersAvailable = 0;
+            if (playerForFixture is not null)
+            {
+                playersAvailable = playerForFixture.PlayersAvailableCount;
+            }
+            finalCount.Add(new FixtureCountSummaryDto
+            {
+                FixtureId = fixture.Id,
+                FixtureDetail = $"{fixture.Opponent} ({fixture.Venue}) - {fixture.StartTime}",
+                DateOfFixture = fixture.DateOfFixture,
+                PlayersAvailable = playersAvailable,
+                PlayersRequired = fixture.NumberOfPlayersRequired
+            });
+        }
+        return finalCount.OrderBy(fc => fc.DateOfFixture).ToList();
+    }
+
+    public async Task<ExecuteCommandResponseDto> SaveAvailability(AddAvailabilityDto input)
+    {
+        var response = new ExecuteCommandResponseDto();
+        var sqlStatement1 = "SELECT COUNT(*) AS 'Total' FROM Availability AS A WHERE a.FixtureId = @fixtureId AND a.playerId = @playerId;";
+
+        var total = await _dataAccess.RunAQuery<ExistingAvailabilityDto, dynamic>(
+            sqlStatement1,
+            new { fixtureId = input.FixtureId, playerid = input.PlayerId },
+            _connectionString);
+
+        if (total.First().Total == 0 && input.IsAvailable)
+        {
+            // Need to add new entry
+            try
+            {
+                var sqlStatement2 = "INSERT INTO Availability(FixtureId, PlayerId) VALUES (@fixtureId, @playerId)";
+                await _dataAccess.ExecuteACommand(
+                    sqlStatement2,
+                    new { fixtureId = input.FixtureId, playerId = input.PlayerId },
+                    _connectionString);
+                response.ExecutionStatus = Enums.ExecuteCommandEnum.Ok;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.ExecutionStatus = Enums.ExecuteCommandEnum.InternalException;
+                response.ErrorMessage = ex.Message;
+                return response;
+            }
+
+        }
+        else
+        {
+            if (input.IsAvailable == false && total.First().Total == 1)
+            {
+                try
+                {
+                    var sqlStatement3 = "DELETE FROM Availability WHERE FixtureId = @fixtureId AND PlayerId = @playerId";
+                    await _dataAccess.ExecuteACommand(
+                        sqlStatement3,
+                        new { fixtureId = input.FixtureId, playerId = input.PlayerId },
+                        _connectionString);
+                    response.ExecutionStatus = Enums.ExecuteCommandEnum.Ok;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    response.ExecutionStatus = Enums.ExecuteCommandEnum.InternalException;
+                    response.ErrorMessage = ex.Message;
+                    return response;
+                }
+
+            }
+        }
+        return response;
+    }
+    #endregion
 }

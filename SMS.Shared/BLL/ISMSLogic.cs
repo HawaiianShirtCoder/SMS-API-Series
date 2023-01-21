@@ -1,4 +1,5 @@
 ﻿using SMS.Shared.DTOs;
+using SMS.Shared.DTOs.Availability;
 using SMS.Shared.DTOs.Fixtures;
 using SMS.Shared.DTOs.Players;
 using SMS.Shared.Models;
@@ -25,6 +26,14 @@ namespace SMS.Shared.BLL
         Task<ExecuteCommandResponseDto> AmendFixture(int id, Fixture fixtureToChange);
 
         Task<ExecuteCommandResponseDto> DeleteFixture(int fixtureId);
+        #endregion
+
+        #region availability logic contracts
+        Task<PlayersAvailableForFixtureDto?> GetPlayersAvailableForFixture(int fixtureId);
+        Task<MyAvailabilitySummaryDto?> GetPlayerAvailabilitySummary(int playerId);
+        Task<List<FixtureCountSummaryDto>> FixtureAvailabilityCounts();
+
+        Task<ExecuteCommandResponseDto> SaveAvailability(AddAvailabilityDto input);
         #endregion
 
     }

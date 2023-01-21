@@ -1,141 +1,65 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SMS.API.Fake_Database;
+using SMS.Shared.BLL;
 using SMS.Shared.DTOs.Availability;
-using SMS.Shared.Models;
 
 namespace SMS.API.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class AvailabilityController : ControllerBase
     {
+        private readonly ISMSLogic _businessLogic;
+
+        public AvailabilityController(ISMSLogic businessLogic)
+        {
+            _businessLogic = businessLogic;
+        }
+
         [Route("PlayersAvailableForFixture/{fixtureId}")]
         [HttpGet]
-        public ActionResult GetPlayersAvailableForFixture(int fixtureId)
+        public async Task<ActionResult> GetPlayersAvailableForFixture(int fixtureId)
         {
-            var fixtureDetails = (from f in InMemoryDatabase.Fixtures
-                                  join a in InMemoryDatabase.Availabilities
-                                       on f.Id equals a.FixtureId
-                                  where a.FixtureId == fixtureId
-                                  select new PlayersAvailableForFixtureDto
-                                  {
-                                      FixtureId = a.FixtureId,
-                                      Opponents = f.Opponent,
-                                      DateOfFixture = f.DateOfFixture,
-                                      Venue = f.Venue,
-                                      StartTime = f.StartTime,
-                                  }).FirstOrDefault();
-            if (fixtureDetails == null)
+            var details = await _businessLogic.GetPlayersAvailableForFixture(fixtureId);
+            if (details == null)
             {
-                return NotFound("Could not find the fixture availability details requested");
+                return NotFound("No Availability details found for fixture");
             }
-
-
-            var playersAvailable = (from p in InMemoryDatabase.Players
-                                    join a in InMemoryDatabase.Availabilities
-                                         on p.Id equals a.PlayerId
-                                    where a.FixtureId == fixtureId
-                                    select new PlayersAvailableDto
-                                    {
-                                        PlayerId = p.Id,
-                                        Fullname = $"{p.Firstname} {p.Lastname}"
-                                    }).ToList();
-            fixtureDetails.AvailablePlayers = playersAvailable;
-
-            return Ok(fixtureDetails);
+            return Ok(details);
         }
 
         [Route("PlayerAvailabilitySummary/{playerId}")]
         [HttpGet]
-        public ActionResult GetPlayerAvailabilitySummary(int playerId)
+        public async Task<ActionResult> GetPlayerAvailabilitySummary(int playerId)
         {
-            var me = (from p in InMemoryDatabase.Players
-                      where p.Id == playerId
-                      select new MyAvailabilitySummaryDto
-                      {
-                          PlayerId = p.Id,
-                          Fullname = $"{p.Firstname} {p.Lastname}"
-                      }).FirstOrDefault();
-            if (me == null)
+            var details = await _businessLogic.GetPlayerAvailabilitySummary(playerId);
+            if (details is null)
             {
-                return NotFound("Could not find the player availability requested");
+                return NotFound("No availability for player found.");
             }
-            var myFixture = (from f in InMemoryDatabase.Fixtures
-                             join a in InMemoryDatabase.Availabilities
-                                 on f.Id equals a.FixtureId
-                             where a.PlayerId == playerId
-
-                             select new MyFixturesDto
-                             {
-                                 FixtureId = f.Id,
-                                 FixtureDetail = $"{f.Opponent} ({f.Venue}) - {f.StartTime}",
-                                 DateOfFixture = f.DateOfFixture
-                             }).ToList();
-            me.MyFixtures = myFixture.OrderBy(f => f.DateOfFixture).ToList();
-            return Ok(me);
+            return Ok(details);
         }
 
         [Route("FixtureAvailabilityCounts")]
         [HttpGet]
-        public ActionResult FixtureAvailabilityCounts()
+        public async Task<ActionResult> FixtureAvailabilityCounts()
         {
-            var counts = (from a in InMemoryDatabase.Availabilities
-                          group a by a.FixtureId into FixtureCount
-                          select new FixtureCountDto
-                          {
-                              FixtureId = FixtureCount.Key,
-                              PlayersAvailableCount = FixtureCount.Count()
-                          }).ToList();
-
-            var countSummary = (from f in InMemoryDatabase.Fixtures
-                                join c in counts
-                                 on f.Id equals c.FixtureId
-                                select new FixtureCountSummaryDto
-                                {
-                                    FixtureId = f.Id,
-                                    FixtureDetail = $"{f.Opponent} ({f.Venue}) - {f.StartTime}",
-                                    DateOfFixture = f.DateOfFixture,
-                                    PlayersAvailable = c.PlayersAvailableCount,
-                                    PlayersRequired = f.NumberOfPlayersRequired
-                                }).ToList();
-            return Ok(countSummary.OrderBy(c => c.DateOfFixture).ToList());
+            var counts = await _businessLogic.FixtureAvailabilityCounts();
+            return Ok(counts);
         }
 
         [HttpPost]
-        public ActionResult PostAvailability(AddAvailabilityDto availabilityDataEntry)
+        public async Task<ActionResult> PostAvailability(AddAvailabilityDto availabilityDataEntry)
         {
-            var currentRecord = InMemoryDatabase.Availabilities
-                .FirstOrDefault(x => x.PlayerId == availabilityDataEntry.PlayerId
-                && x.FixtureId == availabilityDataEntry.FixtureId);
-            if (currentRecord == null && availabilityDataEntry.IsAvailable)
+            var response = await _businessLogic.SaveAvailability(availabilityDataEntry);
+            if (response.ExecutionStatus != Shared.Enums.ExecuteCommandEnum.Ok)
             {
-                // Need to add the new entry
-                InMemoryDatabase.Availabilities.Add(new Availability
-                {
-                    Id = NextIdHelper(),
-                    FixtureId = availabilityDataEntry.FixtureId,
-                    PlayerId = availabilityDataEntry.PlayerId,
-                });
-                return Ok("Added availability for this fixture");
+                return StatusCode((int)response.ExecutionStatus, response.ErrorMessage);
             }
-            else
-            {
-                if (availabilityDataEntry.IsAvailable == false && currentRecord != null)
-                {
-                    InMemoryDatabase.Availabilities.Remove(currentRecord);
-                    return NoContent();
-                }
-            }
-            return Ok("No changes made");
+            return NoContent();
 
         }
 
-
-        private int NextIdHelper()
-        {
-            var lastId = InMemoryDatabase.Availabilities.Max(x => x.Id);
-            return lastId + 1;
-        }
     }
 }
 
