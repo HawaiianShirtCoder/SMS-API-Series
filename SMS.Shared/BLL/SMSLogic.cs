@@ -328,7 +328,7 @@ public class SMSLogic : ISMSLogic
         };
 
         // Get the players who have signed up for the fixture....
-        var sqlStatement = "SELECT p.Id, p.Firstname + ' ' + p.Lastname AS 'Fullname' FROM PLayer as p JOIN Availability as a on p.Id = a.PlayerId where a.FixtureId = @fixtureId";
+        var sqlStatement = "SELECT p.Id AS 'playerId', p.Firstname + ' ' + p.Lastname AS 'Fullname' FROM PLayer as p JOIN Availability as a on p.Id = a.PlayerId where a.FixtureId = @fixtureId";
         var playersAvailable = await _dataAccess.RunAQuery<PlayersAvailableDto, dynamic>(sqlStatement, new { fixtureId }, _connectionString);
         fixtureDetails.AvailablePlayers = playersAvailable.ToList();
         return fixtureDetails;
@@ -347,7 +347,7 @@ public class SMSLogic : ISMSLogic
             Fullname = $"{player.Firstname} {player.Lastname}"
         };
 
-        var sqlStatement = "SELECT f.Id, f.Opponent + ' (' + f.StartTime + ')' AS 'FixtureDetail'  FROM Fixture AS f JOIN Availability AS a ON f.Id = a.FixtureId WHERE a.PlayerId = @playerId";
+        var sqlStatement = "SELECT f.Id AS 'FixtureId', f.Opponent + ' (' + f.StartTime + ')' AS 'FixtureDetail'  FROM Fixture AS f JOIN Availability AS a ON f.Id = a.FixtureId WHERE a.PlayerId = @playerId";
         IEnumerable<MyFixturesDto> myFixtures;
         try
         {
