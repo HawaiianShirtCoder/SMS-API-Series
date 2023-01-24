@@ -243,10 +243,14 @@ public class SMSLogic : ISMSLogic
     public async Task<ExecuteCommandResponseDto> DeleteFixture(int fixtureId)
     {
         var response = new ExecuteCommandResponseDto();
-        var sqlStatement = "DELETE FROM Fixture WHERE id = @id";
+        //var sqlStatement = "DELETE FROM Fixture WHERE id = @id"; // only works if no availability records
+        var sqlStatement = "usp_DeleteFixture";
         try
         {
-            await _dataAccess.ExecuteACommand(sqlStatement, new { id = fixtureId }, _connectionString);
+            await _dataAccess.ExecuteACommand(sqlStatement,
+                                              new { FixtureId = fixtureId },
+                                              _connectionString,
+                                              System.Data.CommandType.StoredProcedure);
             response.ExecutionStatus = Enums.ExecuteCommandEnum.Ok;
             return response;
 
@@ -401,58 +405,25 @@ public class SMSLogic : ISMSLogic
     public async Task<ExecuteCommandResponseDto> SaveAvailability(AddAvailabilityDto input)
     {
         var response = new ExecuteCommandResponseDto();
-        var sqlStatement1 = "SELECT COUNT(*) AS 'Total' FROM Availability AS A WHERE a.FixtureId = @fixtureId AND a.playerId = @playerId;";
+        //var sqlStatement1 = "SELECT COUNT(*) AS 'Total' FROM Availability AS A WHERE a.FixtureId = @fixtureId AND a.playerId = @playerId;";
+        var sqlStatement = "usp_TogglePlayerAvailability";
 
-        var total = await _dataAccess.RunAQuery<ExistingAvailabilityDto, dynamic>(
-            sqlStatement1,
-            new { fixtureId = input.FixtureId, playerid = input.PlayerId },
-            _connectionString);
-
-        if (total.First().Total == 0 && input.IsAvailable)
+        try
         {
-            // Need to add new entry
-            try
-            {
-                var sqlStatement2 = "INSERT INTO Availability(FixtureId, PlayerId) VALUES (@fixtureId, @playerId)";
-                await _dataAccess.ExecuteACommand(
-                    sqlStatement2,
-                    new { fixtureId = input.FixtureId, playerId = input.PlayerId },
-                    _connectionString);
-                response.ExecutionStatus = Enums.ExecuteCommandEnum.Ok;
-                return response;
-            }
-            catch (Exception ex)
-            {
-                response.ExecutionStatus = Enums.ExecuteCommandEnum.InternalException;
-                response.ErrorMessage = ex.Message;
-                return response;
-            }
-
+            await _dataAccess.ExecuteACommand(
+                      sqlStatement,
+                      new { fixtureId = input.FixtureId, playerid = input.PlayerId, isAvailable = input.IsAvailable },
+                      _connectionString,
+                      System.Data.CommandType.StoredProcedure);
+            response.ExecutionStatus = Enums.ExecuteCommandEnum.Ok;
+            return response;
         }
-        else
+        catch (Exception ex)
         {
-            if (input.IsAvailable == false && total.First().Total == 1)
-            {
-                try
-                {
-                    var sqlStatement3 = "DELETE FROM Availability WHERE FixtureId = @fixtureId AND PlayerId = @playerId";
-                    await _dataAccess.ExecuteACommand(
-                        sqlStatement3,
-                        new { fixtureId = input.FixtureId, playerId = input.PlayerId },
-                        _connectionString);
-                    response.ExecutionStatus = Enums.ExecuteCommandEnum.Ok;
-                    return response;
-                }
-                catch (Exception ex)
-                {
-                    response.ExecutionStatus = Enums.ExecuteCommandEnum.InternalException;
-                    response.ErrorMessage = ex.Message;
-                    return response;
-                }
-
-            }
+            response.ExecutionStatus = Enums.ExecuteCommandEnum.InternalException;
+            response.ErrorMessage = ex.Message;
+            return response;
         }
-        return response;
     }
     #endregion
 }

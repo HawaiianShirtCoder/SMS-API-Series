@@ -65,5 +65,6 @@
     <Build Include="Scripts\Amendment1.sql" />
     <Build Include="Scripts\Amendment2 - proc 1.sql" />
     <Build Include="Scripts\Amendment3 - proc 2.sql" />
+    <Build Include="Scripts\Amendment4 - proc for availability.sql" />
   </ItemGroup>
 </Project>

@@ -51,7 +51,10 @@ public class FixtureController : ControllerBase
         var response = await _businessLogic.DeleteFixture(id);
         if (response.ExecutionStatus != Shared.Enums.ExecuteCommandEnum.Ok)
         {
-            return StatusCode((int)response.ExecutionStatus, response.ErrorMessage);
+            // response.ErrorMessage could expose sensitive information to the client
+            // would probably add this to our log files.
+            var errorMessage = response.ErrorMessage;  // just to show the message.
+            return StatusCode((int)response.ExecutionStatus, "Oh no I went wrong!  So sorry!");
         }
         return NoContent();
 
