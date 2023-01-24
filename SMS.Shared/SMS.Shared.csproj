@@ -11,11 +11,22 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="SqlLite\SMS.db" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="SqlLite\SMS.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="C:\Users\Haine\source\repos\SMS\SMS.Shared\.editorconfig" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.123" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
   </ItemGroup>
