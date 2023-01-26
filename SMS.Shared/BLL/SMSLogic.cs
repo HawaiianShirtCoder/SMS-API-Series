@@ -43,6 +43,8 @@ public class SMSLogic : ISMSLogic
         return summaries;
     }
 
+
+
     public async Task<Player?> GetPlayer(int id)
     {
         var sqlStatement = "select * from [dbo].[Player] WHERE id = @id;";
@@ -372,6 +374,38 @@ public class SMSLogic : ISMSLogic
 
         return me;
 
+    }
+
+    public async Task<MeDTO> MyAvailabilitySummary(int playerId)
+    {
+        var allfixtures = await GetAllFixtures();
+        var currentAvailability = await GetPlayerAvailabilitySummary(playerId);
+        var me = new MeDTO();
+        var lst = new List<AvailableToggleDTO>();
+        if (currentAvailability is not null)
+        {
+            me.PlayerId = currentAvailability.PlayerId;
+            me.Fullname = currentAvailability.Fullname;
+            foreach (var f in allfixtures)
+            {
+                var availabilityFlag = false;
+                if (currentAvailability.MyFixtures.Any(x => x.FixtureId == f.Id))
+                {
+                    availabilityFlag = true;
+                }
+                lst.Add(new AvailableToggleDTO
+                {
+                    FixtureId = f.Id,
+                    Opponent = f.Opponent,
+                    DateOfFixture = f.DateOfFixture,
+                    Venue = f.Venue == "Home" ? "H" : "A",
+                    StartTime = f.StartTime,
+                    CurrentAvailabilityStatus = availabilityFlag
+                });
+            }
+        }
+        me.PlayersCurrentAvailability = lst.OrderBy(x => x.DateOfFixture).ToList();
+        return me;
     }
 
     public async Task<List<FixtureCountSummaryDto>> FixtureAvailabilityCounts()

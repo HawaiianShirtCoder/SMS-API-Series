@@ -60,6 +60,14 @@ namespace SMS.API.Controllers
 
         }
 
+        [Route("myAvailability/{id}")]
+        [HttpGet]
+        public async Task<ActionResult> GetMyCurrentAvailability(int id)
+        {
+            var myList = await _businessLogic.MyAvailabilitySummary(id);
+            return myList is null ? NotFound("No curreny availability found") : Ok(myList);
+        }
+
     }
 }
 

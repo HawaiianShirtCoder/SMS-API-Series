@@ -10,6 +10,8 @@ namespace SMS.Shared.BLL
     {
         #region Players Logic contracts
         Task<IEnumerable<PlayerSummaryDto>> GetPlayersSummary();
+
+
         Task<Player?> GetPlayer(int id);
         Task<ExecuteCommandResponseDto> SavePlayer(AddPlayerDto playerToSave);
         Task<IEnumerable<PlayerSummaryDto>> GetPlayersByStatus(bool isActivePlayer);
@@ -29,6 +31,8 @@ namespace SMS.Shared.BLL
         #endregion
 
         #region availability logic contracts
+
+        Task<MeDTO> MyAvailabilitySummary(int playerId);
         Task<PlayersAvailableForFixtureDto?> GetPlayersAvailableForFixture(int fixtureId);
         Task<MyAvailabilitySummaryDto?> GetPlayerAvailabilitySummary(int playerId);
         Task<List<FixtureCountSummaryDto>> FixtureAvailabilityCounts();

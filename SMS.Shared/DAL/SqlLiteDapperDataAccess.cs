@@ -1,17 +1,30 @@
-﻿using System.Data;
+﻿using Dapper;
+using Microsoft.Data.Sqlite;
+using System.Data;
 
 namespace SMS.Shared.DAL;
 
 
 public class SqlLiteDapperDataAccess : IDataAccess
 {
-    public Task ExecuteACommand<T>(string sqlStatement, T parameters, string connectionString, CommandType commandType = CommandType.Text)
+    public async Task ExecuteACommand<T>(string sqlStatement, T parameters, string connectionString, CommandType commandType = CommandType.Text)
     {
-        throw new NotImplementedException();
+        using IDbConnection connection = new SqliteConnection(connectionString);
+        await connection.ExecuteAsync(sqlStatement, parameters, commandType: commandType);
     }
 
-    public Task<IEnumerable<T>> RunAQuery<T, U>(string sqlStatement, U parameters, string connectionString, CommandType commandType = CommandType.Text)
+    public async Task<IEnumerable<T>> RunAQuery<T, U>(string sqlStatement, U parameters, string connectionString, CommandType commandType = CommandType.Text)
     {
-        throw new NotImplementedException();
+        try
+        {
+            using IDbConnection connection = new SqliteConnection(connectionString);
+            return await connection.QueryAsync<T>(sqlStatement, parameters, commandType: commandType);
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+
     }
 }

@@ -18,6 +18,7 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IDataAccess, DapperDataAccess>();
+//builder.Services.AddScoped<IDataAccess, SqlLiteDapperDataAccess>();
 builder.Services.AddScoped<ISMSLogic, SMSLogic>();
 
 var app = builder.Build();

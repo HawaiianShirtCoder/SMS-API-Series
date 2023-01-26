@@ -33,6 +33,8 @@ public class PlayerController : ControllerBase
 
     }
 
+
+
     //[Route("PlayerStatus/{isActivePlayer:bool}")]
     [Route("{isActivePlayer:bool}")]
     [HttpGet]
