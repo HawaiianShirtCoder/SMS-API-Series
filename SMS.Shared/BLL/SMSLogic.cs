@@ -27,7 +27,7 @@ public class SMSLogic : ISMSLogic
     public async Task<IEnumerable<PlayerSummaryDto>> GetPlayersSummary()
     {
         // pre processing 
-        var sqlStatement = "select * from [dbo].[Player];";
+        var sqlStatement = "select * from Player;";
         var players = await _dataAccess.RunAQuery<Player, dynamic>(
             sqlStatement,
             new { },
@@ -192,7 +192,7 @@ public class SMSLogic : ISMSLogic
                 {
                     Id = f.Id,
                     Opponent = f.Opponent,
-                    DateOfFixture = f.DateOfFixture,
+                    DateOfFixture = f.DateOfFixture.ToString(),
                     NumberOfPlayersRequired = f.NumberOfPlayersRequired,
                     StartTime = f.StartTime,
                     Venue = f.Venue.ToString()
@@ -397,7 +397,7 @@ public class SMSLogic : ISMSLogic
                 {
                     FixtureId = f.Id,
                     Opponent = f.Opponent,
-                    DateOfFixture = f.DateOfFixture,
+                    DateOfFixture = f.DateOfFixture.ToString(),
                     Venue = f.Venue == "Home" ? "H" : "A",
                     StartTime = f.StartTime,
                     CurrentAvailabilityStatus = availabilityFlag
