@@ -14,6 +14,7 @@ public class SqlLiteDapperDataAccess : IDataAccess
     {
 
         _dbFile = Environment.CurrentDirectory + "\\sms.sqlite";
+
         _connectionString = "Data Source= " + _dbFile;
         if (!File.Exists(_dbFile))
         {

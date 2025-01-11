@@ -18,7 +18,8 @@ public class SMSLogic : ISMSLogic
     {
         _dataAccess = dataAccess;
         _config = config;
-        _connectionString = _config.GetConnectionString("SMS")!;
+        _connectionString = "Data Source=SMS.sqlite";
+        //_config.GetConnectionString("SMS")!;
     }
 
     #region Players logic
@@ -47,7 +48,7 @@ public class SMSLogic : ISMSLogic
 
     public async Task<Player?> GetPlayer(int id)
     {
-        var sqlStatement = "select * from [dbo].[Player] WHERE id = @id;";
+        var sqlStatement = "select * from Player WHERE id = @id;";
         var player = await _dataAccess.RunAQuery<Player, dynamic>(
             sqlStatement,
             new { id },
@@ -76,7 +77,7 @@ public class SMSLogic : ISMSLogic
         };
 
         var sqlStatement =
-            @"insert INTO [dbo].[Player]
+            @"insert INTO Player
                 ([FirstName]
                 ,[Lastname]
                 ,[Email]
@@ -246,13 +247,20 @@ public class SMSLogic : ISMSLogic
     {
         var response = new ExecuteCommandResponseDto();
         //var sqlStatement = "DELETE FROM Fixture WHERE id = @id"; // only works if no availability records
-        var sqlStatement = "usp_DeleteFixture";
+        var sqlStatement = "delete from availability where fixtureId = @fixtureId";
         try
         {
             await _dataAccess.ExecuteACommand(sqlStatement,
                                               new { FixtureId = fixtureId },
                                               _connectionString,
-                                              System.Data.CommandType.StoredProcedure);
+                                              System.Data.CommandType.Text);
+
+            var sql2 = "delete from fixture where id = @id";
+            await _dataAccess.ExecuteACommand(sql2,
+                                              new { id = fixtureId },
+                                              _connectionString,
+                                              System.Data.CommandType.Text);
+
             response.ExecutionStatus = Enums.ExecuteCommandEnum.Ok;
             return response;
 

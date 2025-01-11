@@ -7,18 +7,18 @@ the venur property is now an enum (VenueEnum) that only allows Home (1) or Away 
 */
 
 -- First update the dummy values in the fixtures table
-UPDATE [dbo].[Fixture]
+UPDATE Fixture
 SET [Venue] = '1'
 WHERE [Venue] = 'Home'
 
 GO
 
-UPDATE [dbo].[Fixture]
+UPDATE Fixture
 SET [Venue] = '2'
 WHERE [Venue] = 'Away'
 
 GO
-ALTER TABLE [dbo].[Fixture]
+ALTER TABLE Fixture
 ALTER COLUMN [Venue] INT NOT NULL
 
 GO
