@@ -247,7 +247,7 @@ public class SMSLogic : ISMSLogic
     {
         var response = new ExecuteCommandResponseDto();
         //var sqlStatement = "DELETE FROM Fixture WHERE id = @id"; // only works if no availability records
-        var sqlStatement = "delete from availability where fixtureId = @fixtureId";
+        var sqlStatement = "delete from Availability where FixtureId = @fixtureId";
         try
         {
             await _dataAccess.ExecuteACommand(sqlStatement,
@@ -255,7 +255,7 @@ public class SMSLogic : ISMSLogic
                                               _connectionString,
                                               System.Data.CommandType.Text);
 
-            var sql2 = "delete from fixture where id = @id";
+            var sql2 = "delete from Fixture where id = @id";
             await _dataAccess.ExecuteACommand(sql2,
                                               new { id = fixtureId },
                                               _connectionString,

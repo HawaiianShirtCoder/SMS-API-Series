@@ -21,6 +21,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="sms.sqlite" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="sms.sqlite">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="C:\Users\Haine\source\repos\SMS\SMS.API\.editorconfig" />
   </ItemGroup>
 
