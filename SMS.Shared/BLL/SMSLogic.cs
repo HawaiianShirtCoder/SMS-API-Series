@@ -448,16 +448,43 @@ public class SMSLogic : ISMSLogic
     {
         var response = new ExecuteCommandResponseDto();
         //var sqlStatement1 = "SELECT COUNT(*) AS 'Total' FROM Availability AS A WHERE a.FixtureId = @fixtureId AND a.playerId = @playerId;";
-        var sqlStatement = "usp_TogglePlayerAvailability";
+        //var sqlStatement = "usp_TogglePlayerAvailability";
+        var sqlStatement = "DELETE FROM Availability WHERE FixtureId = @FixtureId AND PlayerId = @PlayerId;";
 
         try
         {
+
+            //
             await _dataAccess.ExecuteACommand(
-                      sqlStatement,
-                      new { fixtureId = input.FixtureId, playerid = input.PlayerId, isAvailable = input.IsAvailable },
-                      _connectionString,
-                      System.Data.CommandType.StoredProcedure);
-            response.ExecutionStatus = Enums.ExecuteCommandEnum.Ok;
+                sqlStatement,
+                new
+                {
+                    input.FixtureId,
+                    input.PlayerId
+                },
+                _connectionString);
+            //
+
+            if (input.IsAvailable)
+            {
+                var sql2 = "INSERT INTO Availability (FixtureId, PlayerId) VALUES (@FixtureId, @PlayerId);";
+                //await _dataAccess.ExecuteACommand(
+                //    sql2,
+                //    new { FixtureId = input.FixtureId, playerid = input.PlayerId },
+                //     _connectionString,
+                //     System.Data.CommandType.Text);
+
+                await _dataAccess.ExecuteACommand(
+                    sql2,
+                    new
+                    {
+                        input.FixtureId,
+                        input.PlayerId
+                    },
+                    _connectionString);
+
+            }
+
             return response;
         }
         catch (Exception ex)
