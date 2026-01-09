@@ -1,10 +1,32 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SMS.Shared.BLL;
 using SMS.Shared.DAL;
+using System.Text;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var adminConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// JWT Authentication setup
+var key = Encoding.ASCII.GetBytes("YourSuperSecretKeyYourSuperSecretKeyYourSuperSecretKeyYourSuperSecretKeyYourSuperSecretKeyYourSuperSecretKeyYourSuperSecretKeyYourSuperSecretKeyYourSuperSecretKeyYourSuperSecretKeyYourSuperSecretKeyYourSuperSecretKey");
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = "StanwayRonnies",
+            ValidateAudience = true,
+            ValidAudience = "StanwayRonnies",
+            ValidateLifetime = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuerSigningKey = true
+        };
+    });
 
 builder.Services.AddControllers().AddJsonOptions(x =>
 {
@@ -36,7 +58,9 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllers();
 

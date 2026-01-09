@@ -28,7 +28,7 @@ public class SMSLogic : ISMSLogic
     public async Task<IEnumerable<PlayerSummaryDto>> GetPlayersSummary()
     {
         // pre processing 
-        var sqlStatement = "select * from Player;";
+        var sqlStatement = "select * from Player order by Lastname ASC;";
         var players = await _dataAccess.RunAQuery<Player, dynamic>(
             sqlStatement,
             new { },
@@ -342,7 +342,7 @@ public class SMSLogic : ISMSLogic
         };
 
         // Get the players who have signed up for the fixture....
-        var sqlStatement = "SELECT p.Id AS 'playerId', p.Firstname + ' ' + p.Lastname AS 'Fullname' FROM PLayer as p JOIN Availability as a on p.Id = a.PlayerId where a.FixtureId = @fixtureId";
+        var sqlStatement = "SELECT p.Id AS 'playerId', p.Firstname || ' ' || p.Lastname AS 'Fullname'  FROM PLayer as p JOIN Availability as a on p.Id = a.PlayerId where a.FixtureId = @fixtureId";
         var playersAvailable = await _dataAccess.RunAQuery<PlayersAvailableDto, dynamic>(sqlStatement, new { fixtureId }, _connectionString);
         fixtureDetails.AvailablePlayers = playersAvailable.ToList();
         return fixtureDetails;
@@ -447,8 +447,6 @@ public class SMSLogic : ISMSLogic
     public async Task<ExecuteCommandResponseDto> SaveAvailability(AddAvailabilityDto input)
     {
         var response = new ExecuteCommandResponseDto();
-        //var sqlStatement1 = "SELECT COUNT(*) AS 'Total' FROM Availability AS A WHERE a.FixtureId = @fixtureId AND a.playerId = @playerId;";
-        //var sqlStatement = "usp_TogglePlayerAvailability";
         var sqlStatement = "DELETE FROM Availability WHERE FixtureId = @FixtureId AND PlayerId = @PlayerId;";
 
         try
@@ -468,11 +466,6 @@ public class SMSLogic : ISMSLogic
             if (input.IsAvailable)
             {
                 var sql2 = "INSERT INTO Availability (FixtureId, PlayerId) VALUES (@FixtureId, @PlayerId);";
-                //await _dataAccess.ExecuteACommand(
-                //    sql2,
-                //    new { FixtureId = input.FixtureId, playerid = input.PlayerId },
-                //     _connectionString,
-                //     System.Data.CommandType.Text);
 
                 await _dataAccess.ExecuteACommand(
                     sql2,
@@ -493,6 +486,13 @@ public class SMSLogic : ISMSLogic
             response.ErrorMessage = ex.Message;
             return response;
         }
+    }
+
+    public async Task<List<Event>> GetAllEvents()
+    {
+        var sql = "SELECT ID, Name, DateOfEvent, StartTime, Details, Organiser FROM Event ORDER BY DateOfEvent ASC;";
+        var result = await _dataAccess.RunAQuery<Event, dynamic>(sql, new { }, _connectionString);
+        return result.ToList();
     }
     #endregion
 }

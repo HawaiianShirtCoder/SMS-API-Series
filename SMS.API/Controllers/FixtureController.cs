@@ -30,6 +30,7 @@ public class FixtureController : ControllerBase
         return fixture is null ? NotFound("Cannot find the fixture") : Ok(fixture);
     }
 
+    //[Authorize(Roles = "SuperAdmin")]
     [HttpPost]
     public async Task<ActionResult> AddFixture([FromBody] AddFixtureDto addFixture)
     {
@@ -43,7 +44,7 @@ public class FixtureController : ControllerBase
 
     }
 
-
+    // [Authorize(Roles = "SuperAdmin")]
     [Route("{id}")]
     [HttpDelete]
     public async Task<ActionResult> DeleteFixture(int id)
@@ -61,6 +62,7 @@ public class FixtureController : ControllerBase
 
     }
 
+    //[Authorize(Roles = "SuperAdmin")]
     [Route("{id}")]
     [HttpPut]
     public async Task<ActionResult> UpdateFixture(int id, [FromBody] Fixture fixture)

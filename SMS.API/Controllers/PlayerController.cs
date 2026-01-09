@@ -34,8 +34,6 @@ public class PlayerController : ControllerBase
     }
 
 
-
-    //[Route("PlayerStatus/{isActivePlayer:bool}")]
     [Route("{isActivePlayer:bool}")]
     [HttpGet]
     public async Task<ActionResult> GetPlayersByStatus(bool isActivePlayer)
@@ -43,6 +41,7 @@ public class PlayerController : ControllerBase
         return Ok(await _businessLogic.GetPlayersByStatus(isActivePlayer));
     }
 
+    // [Authorize(Roles = "SuperAdmin")]
     [HttpPost]
     public async Task<ActionResult> AddPlayer([FromBody] AddPlayerDto addPlayer)
     {
@@ -54,6 +53,7 @@ public class PlayerController : ControllerBase
         return NoContent();
     }
 
+    // [Authorize(Roles = "SuperAdmin")]
     [Route("{id}")]
     [HttpDelete]
     public async Task<ActionResult> DeletePlayer(int id)
@@ -66,6 +66,7 @@ public class PlayerController : ControllerBase
         return NoContent();
     }
 
+    // [Authorize(Roles = "SuperAdmin")]
     [Route("{id}")]
     [HttpPut]
     public async Task<ActionResult> UpdatePlayer(int id, [FromBody] Player player)

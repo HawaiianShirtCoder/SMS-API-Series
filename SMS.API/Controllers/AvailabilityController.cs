@@ -16,6 +16,7 @@ namespace SMS.API.Controllers
             _businessLogic = businessLogic;
         }
 
+
         [Route("PlayersAvailableForFixture/{fixtureId}")]
         [HttpGet]
         public async Task<ActionResult> GetPlayersAvailableForFixture(int fixtureId)

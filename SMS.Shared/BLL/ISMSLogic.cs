@@ -40,5 +40,9 @@ namespace SMS.Shared.BLL
         Task<ExecuteCommandResponseDto> SaveAvailability(AddAvailabilityDto input);
         #endregion
 
+        #region Events
+        Task<List<Event>> GetAllEvents();
+        #endregion
+
     }
 }
