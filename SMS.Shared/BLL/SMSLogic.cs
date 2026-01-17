@@ -435,7 +435,7 @@ public class SMSLogic : ISMSLogic
             finalCount.Add(new FixtureCountSummaryDto
             {
                 FixtureId = fixture.Id,
-                FixtureDetail = $"{fixture.Opponent} ({fixture.Venue}) - {fixture.StartTime}",
+                FixtureDetail = $"{fixture.Opponent} ({fixture.Venue})",
                 DateOfFixture = fixture.DateOfFixture,
                 PlayersAvailable = playersAvailable,
                 PlayersRequired = fixture.NumberOfPlayersRequired
