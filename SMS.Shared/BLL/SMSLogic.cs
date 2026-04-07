@@ -531,9 +531,9 @@ public class SMSLogic : ISMSLogic
     {
         var response = new ExecuteCommandResponseDto();
         var sqlStatement = @"INSERT INTO BarStaffAssignments 
-            (FixtureId, StaffName, Role, AssignedDate, StartTime, EndTime, Notes) 
+            (FixtureId, StaffName) 
             VALUES 
-            (@FixtureId, @StaffName, @Role, @AssignedDate, @StartTime, @EndTime, @Notes);";
+            (@FixtureId, @StaffName);";
 
         try
         {
@@ -542,11 +542,6 @@ public class SMSLogic : ISMSLogic
                 {
                     assignment.FixtureId,
                     assignment.StaffName,
-                    assignment.Role,
-                    assignment.AssignedDate,
-                    assignment.StartTime,
-                    assignment.EndTime,
-                    assignment.Notes
                 },
                 _connectionString);
             response.ExecutionStatus = Enums.ExecuteCommandEnum.Ok;
@@ -564,9 +559,7 @@ public class SMSLogic : ISMSLogic
     {
         var response = new ExecuteCommandResponseDto();
         var sqlStatement = @"UPDATE BarStaffAssignments 
-            SET FixtureId = @FixtureId, StaffName = @StaffName, Role = @Role, 
-                AssignedDate = @AssignedDate, StartTime = @StartTime, EndTime = @EndTime, 
-                IsConfirmed = @IsConfirmed, Notes = @Notes 
+            SET FixtureId = @FixtureId, StaffName = @StaffName, Role = @Role             
             WHERE Id = @Id;";
 
         try
@@ -576,12 +569,6 @@ public class SMSLogic : ISMSLogic
                 {
                     assignment.FixtureId,
                     assignment.StaffName,
-                    assignment.Role,
-                    assignment.AssignedDate,
-                    assignment.StartTime,
-                    assignment.EndTime,
-                    assignment.IsConfirmed,
-                    assignment.Notes,
                     id
                 },
                 _connectionString);
