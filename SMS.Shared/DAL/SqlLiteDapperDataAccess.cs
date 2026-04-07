@@ -49,17 +49,36 @@ public class SqlLiteDapperDataAccess : IDataAccess
 	                NumberOfPlayersRequired	INTEGER NOT NULL,
 	                PRIMARY KEY(Id AUTOINCREMENT))");
 
-            cnn.Execute(
-                @"
-                CREATE TABLE Availability (
-	                Id	INTEGER NOT NULL UNIQUE,
-	                FixtureId	INTEGER NOT NULL,
-	                PlayerId	INTEGER NOT NULL,
-	                PRIMARY KEY(Id AUTOINCREMENT),
-	                FOREIGN KEY(FixtureId) REFERENCES Fixture,
-	                FOREIGN KEY(PlayerId) REFERENCES Fixture)");
-        }
-    }
+			cnn.Execute(
+				@"
+				CREATE TABLE Availability (
+					Id	INTEGER NOT NULL UNIQUE,
+					FixtureId	INTEGER NOT NULL,
+					PlayerId	INTEGER NOT NULL,
+					PRIMARY KEY(Id AUTOINCREMENT),
+					FOREIGN KEY(FixtureId) REFERENCES Fixture,
+					FOREIGN KEY(PlayerId) REFERENCES Fixture)");
+
+			cnn.Execute(
+				@"
+				CREATE TABLE BarStaffAssignments (
+					Id	INTEGER NOT NULL UNIQUE,
+					FixtureId	INTEGER NOT NULL,
+					StaffName	TEXT NOT NULL,
+					Role	TEXT NOT NULL,
+					AssignedDate	TEXT NOT NULL,
+					StartTime	TEXT,
+					EndTime	TEXT,
+					IsConfirmed	NUMERIC NOT NULL DEFAULT 0,
+					Notes	TEXT,
+					PRIMARY KEY(Id AUTOINCREMENT),
+					FOREIGN KEY(FixtureId) REFERENCES Fixture)");
+
+			cnn.Execute(
+				@"CREATE INDEX IF NOT EXISTS IX_BarStaffAssignments_AssignedDate 
+				ON BarStaffAssignments(AssignedDate)");
+		}
+	}
     private SQLiteConnection SimpleDbConnection()
     {
         return new SQLiteConnection(_connectionString);

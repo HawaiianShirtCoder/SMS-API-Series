@@ -2,6 +2,7 @@
 using SMS.Shared.DAL;
 using SMS.Shared.DTOs;
 using SMS.Shared.DTOs.Availability;
+using SMS.Shared.DTOs.BarStaff;
 using SMS.Shared.DTOs.Fixtures;
 using SMS.Shared.DTOs.Players;
 using SMS.Shared.Models;
@@ -493,6 +494,144 @@ public class SMSLogic : ISMSLogic
         var sql = "SELECT ID, Name, DateOfEvent, StartTime, Details, Organiser FROM Event ORDER BY DateOfEvent ASC;";
         var result = await _dataAccess.RunAQuery<Event, dynamic>(sql, new { }, _connectionString);
         return result.ToList();
+    }
+    #endregion
+
+    #region Bar Staff Assignments
+    public async Task<IEnumerable<BarStaffAssignmentDto>> GetAllBarStaffAssignments()
+    {
+        var sqlStatement = "SELECT * FROM BarStaffAssignments ORDER BY AssignedDate DESC;";
+        var assignments = await _dataAccess.RunAQuery<BarStaffAssignmentDto, dynamic>(sqlStatement, new { }, _connectionString);
+        return assignments;
+    }
+
+    public async Task<IEnumerable<BarStaffAssignmentDto>> GetBarStaffAssignmentsByFixture(int fixtureId)
+    {
+        var sqlStatement = "SELECT * FROM BarStaffAssignments WHERE FixtureId = @FixtureId ORDER BY AssignedDate DESC;";
+        var assignments = await _dataAccess.RunAQuery<BarStaffAssignmentDto, dynamic>(sqlStatement, new { fixtureId }, _connectionString);
+        return assignments;
+    }
+
+    public async Task<IEnumerable<BarStaffAssignmentDto>> GetBarStaffAssignmentsByDate(DateTime assignedDate)
+    {
+        var dateString = assignedDate.ToString("yyyy-MM-dd");
+        var sqlStatement = "SELECT * FROM BarStaffAssignments WHERE DATE(AssignedDate) = @DateString ORDER BY AssignedDate ASC;";
+        var assignments = await _dataAccess.RunAQuery<BarStaffAssignmentDto, dynamic>(sqlStatement, new { dateString }, _connectionString);
+        return assignments;
+    }
+
+    public async Task<BarStaffAssignmentDto?> GetBarStaffAssignment(int id)
+    {
+        var sqlStatement = "SELECT * FROM BarStaffAssignments WHERE Id = @Id;";
+        var assignments = await _dataAccess.RunAQuery<BarStaffAssignmentDto, dynamic>(sqlStatement, new { id }, _connectionString);
+        return assignments.FirstOrDefault();
+    }
+
+    public async Task<ExecuteCommandResponseDto> SaveBarStaffAssignment(AddBarStaffAssignmentDto assignment)
+    {
+        var response = new ExecuteCommandResponseDto();
+        var sqlStatement = @"INSERT INTO BarStaffAssignments 
+            (FixtureId, StaffName, Role, AssignedDate, StartTime, EndTime, Notes) 
+            VALUES 
+            (@FixtureId, @StaffName, @Role, @AssignedDate, @StartTime, @EndTime, @Notes);";
+
+        try
+        {
+            await _dataAccess.ExecuteACommand(sqlStatement,
+                new
+                {
+                    assignment.FixtureId,
+                    assignment.StaffName,
+                    assignment.Role,
+                    assignment.AssignedDate,
+                    assignment.StartTime,
+                    assignment.EndTime,
+                    assignment.Notes
+                },
+                _connectionString);
+            response.ExecutionStatus = Enums.ExecuteCommandEnum.Ok;
+            return response;
+        }
+        catch (Exception ex)
+        {
+            response.ExecutionStatus = Enums.ExecuteCommandEnum.InternalException;
+            response.ErrorMessage = ex.Message;
+            return response;
+        }
+    }
+
+    public async Task<ExecuteCommandResponseDto> UpdateBarStaffAssignment(int id, BarStaffAssignmentDto assignment)
+    {
+        var response = new ExecuteCommandResponseDto();
+        var sqlStatement = @"UPDATE BarStaffAssignments 
+            SET FixtureId = @FixtureId, StaffName = @StaffName, Role = @Role, 
+                AssignedDate = @AssignedDate, StartTime = @StartTime, EndTime = @EndTime, 
+                IsConfirmed = @IsConfirmed, Notes = @Notes 
+            WHERE Id = @Id;";
+
+        try
+        {
+            await _dataAccess.ExecuteACommand(sqlStatement,
+                new
+                {
+                    assignment.FixtureId,
+                    assignment.StaffName,
+                    assignment.Role,
+                    assignment.AssignedDate,
+                    assignment.StartTime,
+                    assignment.EndTime,
+                    assignment.IsConfirmed,
+                    assignment.Notes,
+                    id
+                },
+                _connectionString);
+            response.ExecutionStatus = Enums.ExecuteCommandEnum.Ok;
+            return response;
+        }
+        catch (Exception ex)
+        {
+            response.ExecutionStatus = Enums.ExecuteCommandEnum.InternalException;
+            response.ErrorMessage = ex.Message;
+            return response;
+        }
+    }
+
+    public async Task<ExecuteCommandResponseDto> DeleteBarStaffAssignment(int id)
+    {
+        var response = new ExecuteCommandResponseDto();
+        var sqlStatement = "DELETE FROM BarStaffAssignments WHERE Id = @Id;";
+
+        try
+        {
+            await _dataAccess.ExecuteACommand(sqlStatement, new { id }, _connectionString);
+            response.ExecutionStatus = Enums.ExecuteCommandEnum.Ok;
+            return response;
+        }
+        catch (Exception ex)
+        {
+            response.ExecutionStatus = Enums.ExecuteCommandEnum.InternalException;
+            response.ErrorMessage = ex.Message;
+            return response;
+        }
+    }
+
+    public async Task<ExecuteCommandResponseDto> ConfirmBarStaffAssignment(int id)
+    {
+        var response = new ExecuteCommandResponseDto();
+        var sqlStatement = "UPDATE BarStaffAssignments SET IsConfirmed = 1 WHERE Id = @Id;";
+
+        try
+        {
+            await _dataAccess.ExecuteACommand(sqlStatement, new { id }, _connectionString);
+            response.ExecutionStatus = Enums.ExecuteCommandEnum.Ok;
+            return response;
+        }
+        catch (Exception ex)
+        {
+            response.ExecutionStatus = Enums.ExecuteCommandEnum.InternalException;
+            response.ErrorMessage = ex.Message;
+            return response;
+        }
     }
     #endregion
 }
