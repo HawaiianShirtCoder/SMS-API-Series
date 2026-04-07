@@ -48,30 +48,7 @@ namespace SMS.API.Controllers
             }
         }
 
-        [Route("date/{assignedDate}")]
-        [HttpGet]
-        public async Task<ActionResult> GetBarStaffAssignmentsByDate(string assignedDate)
-        {
-            try
-            {
-                if (!DateTime.TryParse(assignedDate, out var parsedDate))
-                {
-                    return BadRequest("Invalid date format. Use yyyy-MM-dd");
-                }
-
-                var assignments = await _businessLogic.GetBarStaffAssignmentsByDate(parsedDate);
-                if (!assignments.Any())
-                {
-                    return NotFound("No bar staff assignments found for this date");
-                }
-                return Ok(assignments);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "An error occurred", details = ex.Message });
-            }
-        }
-
+    
         [Route("{id}")]
         [HttpGet]
         public async Task<ActionResult> GetBarStaffAssignment(int id)
@@ -150,11 +127,11 @@ namespace SMS.API.Controllers
         {
             try
             {
-                var existing = await _businessLogic.GetBarStaffAssignment(id);
-                if (existing is null)
-                {
-                    return NotFound("Bar staff assignment not found");
-                }
+                //var existing = await _businessLogic.GetBarStaffAssignment(id);
+                //if (existing is null)
+                //{
+                //    return NotFound("Bar staff assignment not found");
+                //}
 
                 var response = await _businessLogic.DeleteBarStaffAssignment(id);
                 if (response.ExecutionStatus != Shared.Enums.ExecuteCommandEnum.Ok)

@@ -500,29 +500,23 @@ public class SMSLogic : ISMSLogic
     #region Bar Staff Assignments
     public async Task<IEnumerable<BarStaffAssignmentDto>> GetAllBarStaffAssignments()
     {
-        var sqlStatement = "SELECT * FROM BarStaffAssignments ORDER BY AssignedDate DESC;";
+        var sqlStatement = "SELECT * FROM BarStaffAssignments;";
         var assignments = await _dataAccess.RunAQuery<BarStaffAssignmentDto, dynamic>(sqlStatement, new { }, _connectionString);
         return assignments;
     }
 
     public async Task<IEnumerable<BarStaffAssignmentDto>> GetBarStaffAssignmentsByFixture(int fixtureId)
     {
-        var sqlStatement = "SELECT * FROM BarStaffAssignments WHERE FixtureId = @FixtureId ORDER BY AssignedDate DESC;";
+        var sqlStatement = "SELECT * FROM BarStaffAssignments WHERE FixtureId = @FixtureId;";
         var assignments = await _dataAccess.RunAQuery<BarStaffAssignmentDto, dynamic>(sqlStatement, new { fixtureId }, _connectionString);
         return assignments;
     }
 
-    public async Task<IEnumerable<BarStaffAssignmentDto>> GetBarStaffAssignmentsByDate(DateTime assignedDate)
-    {
-        var dateString = assignedDate.ToString("yyyy-MM-dd");
-        var sqlStatement = "SELECT * FROM BarStaffAssignments WHERE DATE(AssignedDate) = @DateString ORDER BY AssignedDate ASC;";
-        var assignments = await _dataAccess.RunAQuery<BarStaffAssignmentDto, dynamic>(sqlStatement, new { dateString }, _connectionString);
-        return assignments;
-    }
+   
 
     public async Task<BarStaffAssignmentDto?> GetBarStaffAssignment(int id)
     {
-        var sqlStatement = "SELECT * FROM BarStaffAssignments WHERE Id = @Id;";
+        var sqlStatement = "SELECT * FROM BarStaffAssignments WHERE Id = @id;";
         var assignments = await _dataAccess.RunAQuery<BarStaffAssignmentDto, dynamic>(sqlStatement, new { id }, _connectionString);
         return assignments.FirstOrDefault();
     }
@@ -559,8 +553,8 @@ public class SMSLogic : ISMSLogic
     {
         var response = new ExecuteCommandResponseDto();
         var sqlStatement = @"UPDATE BarStaffAssignments 
-            SET FixtureId = @FixtureId, StaffName = @StaffName, Role = @Role             
-            WHERE Id = @Id;";
+            SET FixtureId = @FixtureId, StaffName = @StaffName             
+            WHERE Id = @id;";
 
         try
         {
@@ -586,7 +580,7 @@ public class SMSLogic : ISMSLogic
     public async Task<ExecuteCommandResponseDto> DeleteBarStaffAssignment(int id)
     {
         var response = new ExecuteCommandResponseDto();
-        var sqlStatement = "DELETE FROM BarStaffAssignments WHERE Id = @Id;";
+        var sqlStatement = "DELETE FROM BarStaffAssignments WHERE Id = @id;";
 
         try
         {
@@ -605,7 +599,7 @@ public class SMSLogic : ISMSLogic
     public async Task<ExecuteCommandResponseDto> ConfirmBarStaffAssignment(int id)
     {
         var response = new ExecuteCommandResponseDto();
-        var sqlStatement = "UPDATE BarStaffAssignments SET IsConfirmed = 1 WHERE Id = @Id;";
+        var sqlStatement = "UPDATE BarStaffAssignments SET IsConfirmed = 1 WHERE Id = @id;";
 
         try
         {

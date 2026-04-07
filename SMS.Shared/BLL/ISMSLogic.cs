@@ -48,7 +48,6 @@ namespace SMS.Shared.BLL
         #region Bar Staff Assignments
         Task<IEnumerable<BarStaffAssignmentDto>> GetAllBarStaffAssignments();
         Task<IEnumerable<BarStaffAssignmentDto>> GetBarStaffAssignmentsByFixture(int fixtureId);
-        Task<IEnumerable<BarStaffAssignmentDto>> GetBarStaffAssignmentsByDate(DateTime assignedDate);
         Task<BarStaffAssignmentDto?> GetBarStaffAssignment(int id);
         Task<ExecuteCommandResponseDto> SaveBarStaffAssignment(AddBarStaffAssignmentDto assignment);
         Task<ExecuteCommandResponseDto> UpdateBarStaffAssignment(int id, BarStaffAssignmentDto assignment);
