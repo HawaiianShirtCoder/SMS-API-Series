@@ -183,7 +183,7 @@ public class SMSLogic : ISMSLogic
     #region Fixtures Logic
     public async Task<IEnumerable<FixtureSummaryDto>> GetAllFixtures()
     {
-        var sqlStatement = "SELECT * FROM Fixture";
+        var sqlStatement = "SELECT * FROM Fixture order by DateOfFixture ASC;";
         var fixtures = await _dataAccess.RunAQuery<Fixture, dynamic>(
             sqlStatement,
             new { },
